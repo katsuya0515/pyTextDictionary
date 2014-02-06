@@ -12,13 +12,12 @@ class MainWindow(wx.Frame):
         global TextField
         TextField = wx.TextCtrl(panel, style=wx.TE_MULTILINE)
         global DictionaryField
-        DictionaryField = wx.StaticText(panel, style=wx.TE_MULTILINE)
+        style =   wx.TE_NO_VSCROLL | wx.TE_MULTILINE
+        DictionaryField = wx.TextCtrl(panel, style=style)
+
         font = wx.Font(20,wx.FONTFAMILY_DEFAULT,wx.FONTSTYLE_NORMAL,wx.FONTWEIGHT_NORMAL)
         DictionaryField.SetFont(font)
-
-        DictionaryField.SetLabel("Dictionary")
-       
-
+        DictionaryField.Disable()
         layout = wx.BoxSizer(wx.HORIZONTAL)
         layout.Add(TextField,flag=wx.GROW,proportion=1)
         layout.Add(DictionaryField,flag=wx.GROW,proportion=1)
@@ -59,17 +58,30 @@ class MainWindow(wx.Frame):
         self.Close(True)  # Close the frame.
 
     def changeDictionary(self,evt):
-        if evt.GetKeyCode() == wx.WXK_SPACE:
+        keycode=evt.GetKeyCode()
+        
+        if keycode == wx.WXK_SPACE or keycode==46 or keycode==44: #46 "."  44 ","
             #DictionaryField.SetLabel(StringValue)
             Output=""
             for i in range(len(StringValue)):
                 Output=Output+StringValue[i]
 
             DictionaryField.SetLabel(Output)
+            self.findDictionary(Output)
             del StringValue[:]
         else:
-           #evt.Skip()
-            StringValue.append(chr(evt.GetKeyCode()).lower())
+           if keycode>64 and keycode<123:
+                StringValue.append(chr(keycode).lower())
+
+    def findDictionary(self,word):
+        with open('ejdic-hand-utf8.txt', 'r') as fp:
+            for line in fp:
+                line = line.rstrip()
+                if line.find(word) != -1:
+
+                    DictionaryField.SetValue(line)
+
+                    break
 
 app = wx.App(False)
 frame = MainWindow(None, "pyTextDictionary")
