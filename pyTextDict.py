@@ -1,5 +1,6 @@
 import os
 import wx
+import re
 
 class MainWindow(wx.Frame):
     def __init__(self, parent, title):
@@ -76,8 +77,9 @@ class MainWindow(wx.Frame):
     def findDictionary(self,word):
         with open('ejdic-hand-utf8.txt', 'r') as fp:
             for line in fp:
-                line = line.rstrip()
-                if line.find(word) != -1:
+                #=re.compile(line.rstrip())
+                line=line.rstrip()
+                if re.match(word,line):
 
                     DictionaryField.SetValue(line)
 
